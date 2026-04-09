@@ -238,7 +238,6 @@
 
     <script>
 
-        // ===== REVEAL ANIMATION =====
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -253,14 +252,13 @@
         });
 
 
-        // ===== CONFIG =====
         const GAS_PROXY_URL = CONFIG.GAS_PROXY_URL;
         const API_KEY = CONFIG.API_KEY;
 
-
-        // ===== DOWNLOAD =====
         async function downloadApp() {
-            const res = await fetch(`${GAS_PROXY_URL}?action=stats&key=${CONFIG.API_KEY}&user=${Date.now()}`);
+            const user = Date.now();
+
+            const res = await fetch(`${GAS_PROXY_URL}?action=stats&key=${API_KEY}&user=${user}`);
             const data = await res.json();
 
             if (!data.exe) {
@@ -268,12 +266,13 @@
                 return;
             }
 
-            // 🔥 langsung download dari GitHub
+            fetch(`${GAS_PROXY_URL}?track=1&file=${encodeURIComponent(data.exe)}&key=${API_KEY}&user=${user}`)
+                .catch(() => { }); // biarin silent
+
             window.location.href = data.exe;
         }
 
 
-        // ===== ANIMATION =====
         function animateValue(el, end, duration = 800) {
             let startTime = null;
 
@@ -290,7 +289,6 @@
         }
 
 
-        // ===== SET VALUE =====
         function setValue(id, value) {
             const el = document.getElementById(id);
             if (!el) return;
@@ -302,8 +300,6 @@
             }
         }
 
-
-        // ===== LOAD STATS =====
         async function loadStats() {
             try {
                 const res = await fetch(`${GAS_PROXY_URL}?action=stats&key=${API_KEY}&user=web`);
@@ -328,8 +324,6 @@
             }
         }
 
-
-        // ===== INIT =====
         loadStats();
 
     </script>
