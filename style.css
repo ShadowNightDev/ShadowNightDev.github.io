@@ -477,3 +477,21 @@ footer {
 html {
   scroll-behavior: smooth;
 }
+
+.preview-image {
+  text-align: center;
+  margin: 60px 0 40px;
+}
+
+.preview-image img {
+  width: 100%;
+  max-width: 1100px;
+  border-radius: 14px;
+  transition: all 0.4s ease;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.preview-image img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 30px 80px rgba(167,139,250,0.35);
+}
