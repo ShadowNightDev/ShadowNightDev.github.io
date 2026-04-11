@@ -145,7 +145,6 @@
                 volume normalization, and seamless crossfade for smooth playback.
             </p>
         </div>
-        </div>
 
         <div class="card">
             <h3>⚙️ Advanced Settings</h3>
@@ -153,7 +152,6 @@
                 Unlock advanced features including bit-perfect playback, Hi-Res audio,
                 and high-speed downloads.
             </p>
-        </div>
         </div>
 
         <div class="card">
@@ -241,35 +239,38 @@
     <section id="download" class="download-section">
 
         <div class="download-card">
-    
+
             <div class="download-left">
                 <div class="badge top-badge">
                     FREE
                 </div>
-    
+
                 <h2>Download Sonix Music</h2>
                 <p>The modern open-source music player for windows.</p>
-    
+
                 <div class="download-meta">
                     <span class="badge">🖥️ Windows</span>
                     <span class="badge">🏷️ <span id="version-badge">—</span></span>
                 </div>
             </div>
-    
-            <button class="btn-primary big-download" onclick="downloadApp()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 3v12"></path>
-                    <path d="M8 11l4 4 4-4"></path>
-                    <path d="M5 19h14"></path>
-                </svg>
-                Download App
-            </button>
-    
-            <div class="download-footer">
-                <span class="badge password-badge">🔑 Password: sonixmusic.online</span>
+
+            <div class="download-actions">
+                <button class="btn-primary big-download" onclick="downloadApp()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 3v12"></path>
+                        <path d="M8 11l4 4 4-4"></path>
+                        <path d="M5 19h14"></path>
+                    </svg>
+                    Download App
+                </button>
+
+                <div class="download-footer">
+                    <span class="badge password-badge">🔑 Password: sonixmusic.online</span>
+                </div>
             </div>
+
         </div>
-    
+
     </section>
 
     <footer>© 2026 Sonix Music</footer>
@@ -295,95 +296,59 @@
         const GAS_PROXY_URL = CONFIG.GAS_PROXY_URL;
         const API_KEY = CONFIG.API_KEY;
 
-    async function downloadApp() {
-        const user = Date.now();
-        const btn = document.querySelector('.big-download');
-        
-        if (!btn) {
-            console.error("Button .big-download not found");
-            return;
-        }
-        
-        const originalBtnContent = btn.innerHTML;
-        
-        try {
-            btn.innerHTML = '⏳ Preparing...';
-            btn.disabled = true;
-    
-    
-            const statsUrl = GAS_PROXY_URL + '?action=stats&key=' + API_KEY + '&user=' + user;
-            const res = await fetch(statsUrl);
-            const data = await res.json();
-    
-            var finalUrl = null;
+        async function downloadApp() {
+            const user = Date.now();
+            const btn = document.querySelector('.big-download');
             
-            if (data.downloadUrl && data.downloadUrl !== "null") {
-                finalUrl = data.downloadUrl;
-            } else if (data.rar && data.rar !== "null") {
-                finalUrl = data.rar;
-            } else if (data.zip && data.zip !== "null") {
-                finalUrl = data.zip;
-            } else if (data.exe && data.exe !== "null") {
-                finalUrl = data.exe;
-            }
-            
-            if (!finalUrl) {
-                alert("⚠️ Download file is not available.\n\nPlease download manually from:\nhttps://github.com/ShadowNightDev/Sonix-Music/releases");
+            if (!btn) {
+                console.error("Button .big-download not found");
                 return;
             }
-    
-            try {
-                const trackUrl = GAS_PROXY_URL + '?track=1&file=' + encodeURIComponent(finalUrl) + '&key=' + API_KEY + '&user=' + user;
-                fetch(trackUrl).catch(function() {});
-            } catch (e) {
-            }
-    
-            window.location.href = finalUrl;
             
-        } catch (err) {
-            console.error("❌ Download error:", err);
-            alert("❌ Failed to fetch download information.\n\nPlease try again or download from:\nhttps://github.com/ShadowNightDev/Sonix-Music/releases");
-        } finally {
-            btn.innerHTML = originalBtnContent;
-            btn.disabled = false;
-        }
-    }
+            const originalBtnContent = btn.innerHTML;
+            
+            try {
+                btn.innerHTML = '⏳ Preparing...';
+                btn.disabled = true;
 
+                const statsUrl = GAS_PROXY_URL + '?action=stats&key=' + API_KEY + '&user=' + user;
+                const res = await fetch(statsUrl);
+                const data = await res.json();
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const passwordBadge = document.querySelector('.password-badge');
-            if (passwordBadge) {
-                passwordBadge.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const password = 'sonixmusic.online';
-                    
-                    navigator.clipboard.writeText(password).then(() => {
-                        const originalText = this.textContent;
-                        this.textContent = '✅ Copied!';
-                        this.style.background = 'rgba(34, 197, 94, 0.3)';
-                        
-                        setTimeout(() => {
-                            this.textContent = originalText;
-                            this.style.background = '';
-                        }, 1500);
-                    }).catch(() => {
+                var finalUrl = null;
+                
+                if (data.downloadUrl && data.downloadUrl !== "null") {
+                    finalUrl = data.downloadUrl;
+                } else if (data.rar && data.rar !== "null") {
+                    finalUrl = data.rar;
+                } else if (data.zip && data.zip !== "null") {
+                    finalUrl = data.zip;
+                } else if (data.exe && data.exe !== "null") {
+                    finalUrl = data.exe;
+                }
+                
+                if (!finalUrl) {
+                    alert("⚠️ Download file is not available.\n\nPlease download manually from:\nhttps://github.com/ShadowNightDev/Sonix-Music/releases");
+                    return;
+                }
 
-                        const tempInput = document.createElement('input');
-                        tempInput.value = password;
-                        document.body.appendChild(tempInput);
-                        tempInput.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(tempInput);
-                        
-                        const originalText = this.textContent;
-                        this.textContent = '✅ Copied!';
-                        setTimeout(() => {
-                            this.textContent = originalText;
-                        }, 1500);
-                    });
-                });
+                try {
+                    const trackUrl = GAS_PROXY_URL + '?track=1&file=' + encodeURIComponent(finalUrl) + '&key=' + API_KEY + '&user=' + user;
+                    fetch(trackUrl).catch(function() {});
+                } catch (e) {
+                }
+
+                window.location.href = finalUrl;
+                
+            } catch (err) {
+                console.error("❌ Download error:", err);
+                alert("❌ Failed to fetch download information.\n\nPlease try again or download from:\nhttps://github.com/ShadowNightDev/Sonix-Music/releases");
+            } finally {
+                btn.innerHTML = originalBtnContent;
+                btn.disabled = false;
             }
-        });
+        }
+
 
         function animateValue(el, end, duration = 800) {
             let startTime = null;
@@ -437,6 +402,40 @@
         }
 
         loadStats();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordBadge = document.querySelector('.password-badge');
+            if (passwordBadge) {
+                passwordBadge.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const password = 'sonixmusic.online';
+                    
+                    navigator.clipboard.writeText(password).then(() => {
+                        const originalText = this.textContent;
+                        this.textContent = '✅ Copied!';
+                        this.style.background = 'rgba(34, 197, 94, 0.3)';
+                        
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                            this.style.background = '';
+                        }, 1500);
+                    }).catch(() => {
+                        const tempInput = document.createElement('input');
+                        tempInput.value = password;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+                        
+                        const originalText = this.textContent;
+                        this.textContent = '✅ Copied!';
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                        }, 1500);
+                    });
+                });
+            }
+        });
 
     </script>
 </body>
