@@ -301,15 +301,15 @@
             const res = await fetch(`${GAS_PROXY_URL}?action=stats&key=${API_KEY}&user=${user}`);
             const data = await res.json();
 
-            if (!data.exe) {
+            if (!data.downloadUrl) {
                 alert("Oops! This file isn’t available right now. Try downloading it directly from GitHub.");
                 return;
             }
 
             fetch(`${GAS_PROXY_URL}?track=1&file=${encodeURIComponent(data.exe)}&key=${API_KEY}&user=${user}`)
-                .catch(() => { }); // biarin silent
+                .catch(() => { });
 
-            window.location.href = data.exe;
+            window.location.href = downloadUrl;
         }
 
 
