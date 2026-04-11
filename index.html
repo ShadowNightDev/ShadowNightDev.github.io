@@ -295,22 +295,61 @@
         const GAS_PROXY_URL = CONFIG.GAS_PROXY_URL;
         const API_KEY = CONFIG.API_KEY;
 
-        async function downloadApp() {
-            const user = Date.now();
+        // ✅ FUNGSI downloadApp() - VERSI FINAL ANTI-ERROR
+async function downloadApp() {
+    const user = Date.now();
+    const btn = document.querySelector('.big-download');
+    
+    if (!btn) {
+        console.error("Button .big-download not found");
+        return;
+    }
+    
+    const originalBtnContent = btn.innerHTML;
+    
+    try {
+        // Loading state
+        btn.innerHTML = '⏳ Preparing...';
+        btn.disabled = true;
 
-            const res = await fetch(`${GAS_PROXY_URL}?action=stats&key=${API_KEY}&user=${user}`);
-            const data = await res.json();
 
-            if (!data.downloadUrl) {
-                alert("Oops! This file isn’t available right now. Try downloading it directly from GitHub.");
-                return;
-            }
+        const statsUrl = GAS_PROXY_URL + '?action=stats&key=' + API_KEY + '&user=' + user;
+        const res = await fetch(statsUrl);
+        const data = await res.json();
 
-            fetch(`${GAS_PROXY_URL}?track=1&file=${encodeURIComponent(data.exe)}&key=${API_KEY}&user=${user}`)
-                .catch(() => { });
-
-            window.location.href = downloadUrl;
+        var finalUrl = null;
+        
+        if (data.downloadUrl && data.downloadUrl !== "null") {
+            finalUrl = data.downloadUrl;
+        } else if (data.rar && data.rar !== "null") {
+            finalUrl = data.rar;
+        } else if (data.zip && data.zip !== "null") {
+            finalUrl = data.zip;
+        } else if (data.exe && data.exe !== "null") {
+            finalUrl = data.exe;
         }
+        
+        if (!finalUrl) {
+            alert("⚠️ File download tidak tersedia.\n\nSilakan download manual dari:\nhttps://github.com/ShadowNightDev/Sonix-Music/releases");
+            return;
+        }
+
+        try {
+            const trackUrl = GAS_PROXY_URL + '?track=1&file=' + encodeURIComponent(finalUrl) + '&key=' + API_KEY + '&user=' + user;
+            fetch(trackUrl).catch(function() {});
+        } catch (e) {
+        }
+
+        window.location.href = finalUrl;
+        
+    } catch (err) {
+        console.error("❌ Download error:", err);
+        alert("❌ Gagal mengambil info download.\n\nSilakan coba lagi atau download dari:\nhttps://github.com/ShadowNightDev/Sonix-Music/releases");
+    } finally {
+        btn.innerHTML = originalBtnContent;
+        btn.disabled = false;
+    }
+}
 
 
         function animateValue(el, end, duration = 800) {
